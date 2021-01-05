@@ -1,5 +1,6 @@
 // required modules
 const express = require("express");
+const path = require("path");
 const mongoose = require("mongoose");
 
 // create express instance
@@ -11,6 +12,10 @@ const PORT = process.env.PORT || 8080;
 // set middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+const db = require("./models");
+
+app.use(express.static("public"));
 
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", {
   useNewUrlParser: true,
@@ -30,7 +35,50 @@ connection.on("error", (err) => {
 });
 
 // setup view routes
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "/public/index.html"));
+});
+
+app.get("/stats", (req, res) => {
+  res.sendFile(path.join(__dirname, "/public/stats.html"));
+});
+
+app.get("/exercise", (req, res) => {
+  res.sendFile(path.join(__dirname, "/public/exercise.html"));
+});
+
+// API routes
+
+app.get("/api/workouts", (req, res) => {
+  db.Workout.find().then((workout) => {
+    res.json(workout);
+  });
+});
+
+// create a new workout route
+app.post("/api/workouts", (req, res) => {
+  db.Workout.create(req.body).then((workout) => {
+    res.json(workout);
+    console.log(workout);
+  });
+});
+
+// route to add exercise to current workout
+app.put("/api/workouts/:id", (req, res) => {
+  db.Workout.findByIdAndUpdate(
+    req.params.id,
+    { $push: { exercises: req.body } },
+    { new: true }
+  )
+    .then((workout) => {
+      res.json(workout);
+      console.log(workout);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
 app.listen(PORT, () => {
-  console.log(`Server is running on https://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
