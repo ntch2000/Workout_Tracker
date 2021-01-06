@@ -49,8 +49,22 @@ app.get("/exercise", (req, res) => {
 
 // API routes
 
+// app.get("/api/workouts", (req, res) => {
+//   db.Workout.find().then((workout) => {
+//     res.json(workout);
+//   });
+// });
+
+// aggregate function to add totalDuration field
 app.get("/api/workouts", (req, res) => {
-  db.Workout.find().then((workout) => {
+  db.Workout.aggregate([
+    {
+      $addFields: {
+        totalDuration: { $sum: "$exercises.duration" },
+      },
+    },
+  ]).then((workout) => {
+    //console.log(workout.totalDuration);
     res.json(workout);
   });
 });
@@ -59,7 +73,7 @@ app.get("/api/workouts", (req, res) => {
 app.post("/api/workouts", (req, res) => {
   db.Workout.create(req.body).then((workout) => {
     res.json(workout);
-    console.log(workout);
+    //console.log(workout);
   });
 });
 
@@ -72,7 +86,24 @@ app.put("/api/workouts/:id", (req, res) => {
   )
     .then((workout) => {
       res.json(workout);
-      console.log(workout);
+      //console.log(workout);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+app.get("/api/workouts/range", (req, res) => {
+  db.Workout.aggregate([
+    {
+      $addFields: {
+        totalDuration: { $sum: "$exercises.duration" },
+      },
+    },
+  ])
+    .limit(7)
+    .then((stats) => {
+      res.json(stats);
     })
     .catch((err) => {
       console.log(err);
