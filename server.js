@@ -93,6 +93,7 @@ app.put("/api/workouts/:id", (req, res) => {
     });
 });
 
+// add sort
 app.get("/api/workouts/range", (req, res) => {
   db.Workout.aggregate([
     {
@@ -101,6 +102,7 @@ app.get("/api/workouts/range", (req, res) => {
       },
     },
   ])
+    .sort({ _id: -1 })
     .limit(7)
     .then((stats) => {
       res.json(stats);
@@ -109,6 +111,10 @@ app.get("/api/workouts/range", (req, res) => {
       console.log(err);
     });
 });
+
+// app.get("/api/workouts/range", (req, res)=>{
+//   db.Workout.find().limit(7).then()
+// })
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
