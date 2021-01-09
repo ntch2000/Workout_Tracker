@@ -1,3 +1,4 @@
+// has all the API routes required for the application
 const db = require("../models");
 
 module.exports = (app) => {
@@ -9,18 +10,24 @@ module.exports = (app) => {
           totalDuration: { $sum: "$exercises.duration" },
         },
       },
-    ]).then((workout) => {
-      //console.log(workout.totalDuration);
-      res.json(workout);
-    });
+    ])
+      .then((workout) => {
+        res.json(workout);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   });
 
   // create a new workout route
   app.post("/api/workouts", (req, res) => {
-    db.Workout.create(req.body).then((workout) => {
-      res.json(workout);
-      //console.log(workout);
-    });
+    db.Workout.create(req.body)
+      .then((workout) => {
+        res.json(workout);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   });
 
   // route to add exercise to current workout
@@ -32,14 +39,13 @@ module.exports = (app) => {
     )
       .then((workout) => {
         res.json(workout);
-        //console.log(workout);
       })
       .catch((err) => {
         console.log(err);
       });
   });
 
-  // add sort
+  // route for populating the stats dashboard with the last 7 workouts
   app.get("/api/workouts/range", (req, res) => {
     db.Workout.aggregate([
       {
