@@ -69,4 +69,4 @@ _Gif of using the Fitness Tracker application_
 
 ---
 
-© 2020 Neil Gandhi
+© 2021 Neil Gandhi
