@@ -1,6 +1,5 @@
 // required modules
 const express = require("express");
-//const path = require("path");
 const mongoose = require("mongoose");
 
 // create express instance
@@ -12,8 +11,6 @@ const PORT = process.env.PORT || 8080;
 // set middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-//const db = require("./models");
 
 app.use(express.static("public"));
 
